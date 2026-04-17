@@ -2,7 +2,6 @@ package br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -76,7 +75,7 @@ fun MainScreen() {
 
     val openParameterActivity = {
         val intent = Intent(context, ParameterActivity::class.java)
-        intent.putExtra("EXTRA_PARAMETER", "Default Parameter")
+        intent.putExtra("EXTRA_PARAMETER", parameter)
         parameterActivityLauncher.launch(intent)
     }
 
@@ -139,7 +138,7 @@ fun MainScreen() {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Current Phone: 123456789",
+                    text = "Current Phone: $parameter",
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 16.dp)
                 )

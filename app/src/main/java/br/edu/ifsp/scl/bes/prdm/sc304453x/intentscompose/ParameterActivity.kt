@@ -25,10 +25,11 @@ import br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose.ui.theme.IntentsCompose
 class ParameterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val receivedParameter = intent.getStringExtra("EXTRA_PARAMETER") ?: ""
         enableEdgeToEdge()
         setContent {
             IntentsComposeTheme {
-                ParameterScreen()
+                ParameterScreen(initialParameter = receivedParameter)
             }
         }
     }
@@ -36,14 +37,12 @@ class ParameterActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ParameterScreen() {
+fun ParameterScreen(initialParameter: String = "") {
     var parameter by remember { mutableStateOf("") }
-
     val context = LocalContext.current
-    val receivedParameter = (context as ComponentActivity).intent.getStringExtra("EXTRA_PARAMETER") ?: ""
 
-    LaunchedEffect(receivedParameter) {
-        parameter = receivedParameter
+    LaunchedEffect(initialParameter) {
+        parameter = initialParameter
     }
 
     Scaffold(
