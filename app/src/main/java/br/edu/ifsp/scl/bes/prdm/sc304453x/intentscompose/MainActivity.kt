@@ -59,6 +59,12 @@ fun MainScreen() {
         }
     )
 
+    val openParameterActivity = {
+        val intent = Intent(context, ParameterActivity::class.java)
+        intent.putExtra("EXTRA_PARAMETER", "Default Parameter")
+        context.startActivity(intent)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,7 +79,10 @@ fun MainScreen() {
                     ) {
                         DropdownMenuItem(
                             text = { Text("Set Parameter") },
-                            onClick = { expanded = false }
+                            onClick = {
+                                expanded = false
+                                openParameterActivity()
+                            }
                         )
                         DropdownMenuItem(
                             text = { Text("Make Call") },
