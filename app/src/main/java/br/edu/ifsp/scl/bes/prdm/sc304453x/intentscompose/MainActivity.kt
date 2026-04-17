@@ -1,5 +1,6 @@
 package br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -15,10 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose.ui.theme.IntentsComposeTheme
+import androidx.core.net.toUri
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,15 +39,27 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     var expanded by remember { mutableStateOf(false) }
+    var parameter by rememberSaveable { mutableStateOf("123456789") }
     val context = LocalContext.current
 
     val callOrDialPhoneNumber = { call: Boolean ->
         val intent = if (call) {
-            Intent(Intent.ACTION_CALL, Uri.parse("tel:123456789"))
+            Intent(Intent.ACTION_CALL, "tel:$parameter".toUri())
         } else {
-            Intent(Intent.ACTION_DIAL, Uri.parse("tel:123456789"))
+            Intent(Intent.ACTION_DIAL, "tel:$parameter".toUri())
         }
         context.startActivity(intent)
+    }
+
+    val parameterActivityLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedParameter = result.data?.getStringExtra("EXTRA_PARAMETER")
+            if (updatedParameter != null) {
+                parameter = updatedParameter
+            }
+        }
     }
 
     val callPhonePermissionLauncher = rememberLauncherForActivityResult(
@@ -62,7 +77,7 @@ fun MainScreen() {
     val openParameterActivity = {
         val intent = Intent(context, ParameterActivity::class.java)
         intent.putExtra("EXTRA_PARAMETER", "Default Parameter")
-        context.startActivity(intent)
+        parameterActivityLauncher.launch(intent)
     }
 
     Scaffold(
