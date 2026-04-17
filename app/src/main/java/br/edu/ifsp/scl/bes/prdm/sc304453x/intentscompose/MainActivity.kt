@@ -2,10 +2,14 @@ package br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -42,27 +46,49 @@ fun MainScreen() {
         context.startActivity(intent)
     }
 
+    val callPhonePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val isPermissionGranted = permissions.getOrDefault("android.permission.CALL_PHONE", false)
+            if (isPermissionGranted) {
+                callOrDialPhoneNumber(true)
+            } else {
+                Toast.makeText(context, "Permission required!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Intents Example") },
                 actions = {
-                    IconButton(onClick = { expanded = !expanded}) {
+                    IconButton(onClick = { expanded = !expanded }) {
                         Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
                     }
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false}
+                        onDismissRequest = { expanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("SetParameter")},
-                            OnClick = { expanded = false}
+                            text = { Text("Set Parameter") },
+                            onClick = { expanded = false }
                         )
                         DropdownMenuItem(
                             text = { Text("Make Call") },
                             onClick = {
                                 expanded = false
-                                callOrDialPhoneNumber(true)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    if (context.checkSelfPermission(android.Manifest.permission.CALL_PHONE)
+                                        == android.content.pm.PackageManager.PERMISSION_GRANTED
+                                    ) {
+                                        callOrDialPhoneNumber(true)
+                                    } else {
+                                        callPhonePermissionLauncher.launch(arrayOf(android.Manifest.permission.CALL_PHONE))
+                                    }
+                                } else {
+                                    callOrDialPhoneNumber(true)
+                                }
                             }
                         )
                         DropdownMenuItem(
