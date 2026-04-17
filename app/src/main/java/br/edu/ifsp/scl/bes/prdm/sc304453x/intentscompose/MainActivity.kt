@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import br.edu.ifsp.scl.bes.prdm.sc304453x.intentscompose.ui.theme.IntentsComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -107,7 +108,17 @@ fun MainScreen() {
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
+                    .padding(16.dp)
             ) {
+                Text(text = "Use the menu to make a call or dial a number", style = MaterialTheme.typography.bodyLarge)
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Current Phone: 123456789",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     )
